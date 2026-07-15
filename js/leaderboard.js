@@ -55,7 +55,7 @@ let smallPopupShown = false;
 
 // Check if we're on the full leaderboard page
 function isFullLeaderboardPage() {
-    return window.location.pathname.includes('leaderboard.html');
+    return window.location.pathname.includes('index.html');
 }
 
 // Render Full Leaderboard Page
@@ -128,7 +128,7 @@ function renderSmallLeaderboardPopup() {
                 ${topDonor.title ? `<p style="background: var(--primary-yellow); color: var(--slate-900); padding: 0.25rem 1rem; border-radius: 9999px; display: inline-block; font-size: 0.75rem; font-weight: 700;">${topDonor.title}</p>` : ''}
                 <div class="flex gap-3 mt-6">
                     <button onclick="closeSmallLeaderboardPopup()" class="btn-primary" style="flex: 1; background: var(--slate-200); color: var(--slate-800);">Close</button>
-                    <a href="leaderboard.html" class="btn-primary" style="flex: 1; text-decoration: none;">View Full Leaderboard</a>
+                    <a href="index.html" class="btn-primary" style="flex: 1; text-decoration: none;">View Full Leaderboard</a>
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@ function renderFloatingDonorBox() {
                     <div class="font-bold text-sm">${topDonor.name}</div>
                     <div class="text-xs text-slate-500">₹${topDonor.amount.toLocaleString('en-IN')}</div>
                 </div>
-                <a href="leaderboard.html" class="floating-donor-link">
+                <a href="index.html" class="floating-donor-link">
                     <i data-lucide="external-link" style="width: 1rem; height: 1rem;"></i>
                 </a>
             </div>
