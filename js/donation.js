@@ -5,10 +5,11 @@
 
     if (!modal || !form) return;
 
-    window.openDonationModal = function() {
+    window.openDonationModal = function(amount) {
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        if (amount) document.getElementById('donation-amount').value = amount;
         document.getElementById('donation-amount')?.focus();
     };
 
@@ -18,11 +19,21 @@
         document.body.style.overflow = '';
     };
 
-    document.querySelectorAll('.hero-section .hero-btn').forEach(button => {
+    document.querySelectorAll('[data-scroll-target]').forEach(button => {
         button.addEventListener('click', event => {
             event.preventDefault();
-            window.openDonationModal();
+            document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
+    });
+
+    document.querySelector('.challenge-hero-btn')?.addEventListener('click', event => {
+        event.preventDefault();
+        document.getElementById('donation-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelector('.donation-open-button')?.addEventListener('click', () => window.openDonationModal());
+    document.querySelectorAll('[data-quick-amount]').forEach(button => {
+        button.addEventListener('click', () => window.openDonationModal(Number(button.dataset.quickAmount)));
     });
 
     document.querySelectorAll('.donation-nav-link').forEach(link => {

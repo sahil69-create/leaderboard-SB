@@ -71,9 +71,80 @@ function escapeHTML(value) {
     }[character]));
 }
 
+function formatAmount(amount) {
+    return `₹${Number(amount || 0).toLocaleString('en-IN')}`;
+}
+
+function getChallengeCopy(sortedData) {
+    const king = sortedData[0] || { name: 'No king yet', amount: 0 };
+    const challengeAmount = Number(king.amount || 0) + 1;
+    return { king, challenger: sortedData[1], challengeAmount };
+}
+
+function renderChallengeSummary(sortedData) {
+    const { king, challengeAmount } = getChallengeCopy(sortedData);
+    const summary = document.getElementById('challenge-king-summary');
+    if (summary) {
+        summary.innerHTML = `
+            <div class="challenge-king-label">Current King</div>
+            <div class="challenge-king-crown">&#9819;</div>
+            <div class="challenge-king-name">${escapeHTML(king.name)}</div>
+            <div class="challenge-king-amount">${formatAmount(king.amount)}</div>
+            <div class="challenge-king-title">King of Sharm</div>
+            <div class="challenge-amount">${formatAmount(challengeAmount)} <span>to take the crown</span></div>
+        `;
+    }
+    document.getElementById('donation-current-king')?.replaceChildren(document.createTextNode(formatAmount(king.amount)));
+    document.getElementById('donation-challenge-amount')?.replaceChildren(document.createTextNode(formatAmount(challengeAmount)));
+}
+
+function renderKingThreat(sortedData) {
+    const threat = document.getElementById('king-threat');
+    const { king, challenger } = getChallengeCopy(sortedData);
+    if (!threat || !challenger || !king.amount) return;
+    const ratio = Number(challenger.amount) / Number(king.amount);
+    if (ratio < 0.8) {
+        threat.hidden = true;
+        return;
+    }
+    const gap = Number(king.amount) - Number(challenger.amount);
+    threat.hidden = false;
+    threat.innerHTML = `
+        <div class="king-threat-header"><span>&#9888; King under threat</span><strong>${Math.round(ratio * 100)}% close</strong></div>
+        <div class="king-threat-copy"><span>Current King: <b>${escapeHTML(king.name)} ${formatAmount(king.amount)}</b></span><span>Closest Challenger: <b>${escapeHTML(challenger.name)} ${formatAmount(challenger.amount)}</b></span></div>
+        <div class="threat-progress"><span style="width: ${Math.min(100, ratio * 100)}%"></span></div>
+        <p>Only ${formatAmount(gap)} behind the crown.</p>
+    `;
+}
+
+function renderShareActions(sortedData) {
+    const { king } = getChallengeCopy(sortedData);
+    const text = `👑 The current King of Sharm is ${king.name} with ${formatAmount(king.amount)}. Think you can steal the crown? Beat ${formatAmount(king.amount)} and become the new King of Sharm. donate.sharmbazaar.online`;
+    document.querySelectorAll('[data-share]').forEach(button => {
+        button.onclick = async () => {
+            const type = button.dataset.share;
+            const url = window.location.href;
+            const feedback = document.getElementById('share-feedback');
+            try {
+                if (type === 'copy') await navigator.clipboard.writeText(`${text} ${url}`);
+                else if (type === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank', 'noopener');
+                else if (type === 'instagram') await navigator.clipboard.writeText(`${text} ${url}`);
+                else if (navigator.share) await navigator.share({ title: 'Beat the King of Sharm', text, url });
+                else await navigator.clipboard.writeText(`${text} ${url}`);
+                if (feedback) feedback.textContent = type === 'instagram' ? 'Challenge copied. Paste it into Instagram.' : 'Challenge ready to share.';
+            } catch (error) {
+                if (feedback) feedback.textContent = 'Sharing was cancelled.';
+            }
+        };
+    });
+}
+
 // Render Full Leaderboard Page
 function renderFullLeaderboardPage() {
     const sortedData = [...window.leaderboardData].sort((a, b) => b.amount - a.amount);
+    renderChallengeSummary(sortedData);
+    renderKingThreat(sortedData);
+    renderShareActions(sortedData);
     
     // Top Donor Highlight
     const topDonorContainer = document.getElementById('leaderboard-top-donor');
@@ -85,6 +156,9 @@ function renderFullLeaderboardPage() {
                 <h4 class="top-donor-name">${escapeHTML(topDonor.name)}</h4>
                 <p class="text-sm opacity-80 mb-2">${escapeHTML(topDonor.location || 'Verified donor')}</p>
                 <div class="top-donor-amount">₹${topDonor.amount.toLocaleString('en-IN')}</div>
+                <div class="king-card-caption">Current #1 supporter</div>
+                <div class="king-card-challenge">Can you beat ${formatAmount(topDonor.amount)}?</div>
+                <div class="king-card-target">${formatAmount(Number(topDonor.amount) + 1)} to take the crown</div>
             </div>
         `;
     }
@@ -104,6 +178,8 @@ function renderFullLeaderboardPage() {
             itemDiv.className = 'leaderboard-item';
             itemDiv.style.maxWidth = '600px';
             itemDiv.style.margin = '0 auto';
+            const badge = rank === 1 ? 'King of Sharm' : rank === 2 ? 'King Challenger' : rank === 3 ? 'Top Challenger' : 'Sharm Supporter';
+            const badgeIcon = rank === 1 ? '&#9819;' : rank === 2 ? '&#9876;' : rank === 3 ? '&#128293;' : '&#10024;';
             itemDiv.innerHTML = `
                 <div class="leaderboard-rank ${rankClass}" style="flex-shrink: 0;">${rank}</div>
                 <div class="leaderboard-info" style="flex-grow: 1; margin-left: 1rem;">
@@ -111,6 +187,7 @@ function renderFullLeaderboardPage() {
                     <div class="leaderboard-location">${escapeHTML(donor.location || 'Verified donor')}</div>
                     ${donor.paidAt ? `<div class="leaderboard-payment-meta">Paid ${escapeHTML(new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(donor.paidAt)))} via ${escapeHTML(donor.sourceWebsite || 'SharmBazaar')}</div>` : ''}
                 </div>
+                <div class="leaderboard-badge">${badgeIcon} ${badge}</div>
                 <div class="leaderboard-amount" style="flex-shrink: 0;">₹${donor.amount.toLocaleString('en-IN')}</div>
             `;
             fullListContainer.appendChild(itemDiv);
@@ -156,7 +233,7 @@ function renderSmallLeaderboardPopup() {
                 ${topDonor.title ? `<p style="background: var(--primary-yellow); color: var(--slate-900); padding: 0.25rem 1rem; border-radius: 9999px; display: inline-block; font-size: 0.75rem; font-weight: 700;">${topDonor.title}</p>` : ''}
                 <div class="flex gap-3 mt-6">
                     <button onclick="closeSmallLeaderboardPopup()" class="btn-primary" style="flex: 1; background: var(--slate-200); color: var(--slate-800);">Close</button>
-                    <a href="index.html" class="btn-primary" style="flex: 1; text-decoration: none;">View Full Leaderboard</a>
+                    <a href="https://donate.sharmbazaar.online/" class="btn-primary" style="flex: 1; text-decoration: none;">View Full Leaderboard</a>
                 </div>
             </div>
         </div>
@@ -204,7 +281,7 @@ function renderFloatingDonorBox() {
                     <div class="font-bold text-sm">${topDonor.name}</div>
                     <div class="text-xs text-slate-500">₹${topDonor.amount.toLocaleString('en-IN')}</div>
                 </div>
-                <a href="index.html" class="floating-donor-link">
+                <a href="https://donate.sharmbazaar.online/" class="floating-donor-link">
                     <i data-lucide="external-link" style="width: 1rem; height: 1rem;"></i>
                 </a>
             </div>
