@@ -66,7 +66,7 @@
     <!-- Navbar -->
     <nav class="navbar glass">
         <div class="max-container nav-wrapper">
-            <a href="index.html" class="logo-group" style="text-decoration: none;">
+            <a href="https://www.sharmbazaar.in/" class="logo-group" style="text-decoration: none;">
                 <img src="https://files.catbox.moe/a3v1xn.webp" alt="SharmBazaar Logo" width="40" height="40" loading="lazy" decoding="async" class="logo-img">
                 <span class="logo-text">Sharm<span style="color: white;">Bazaar</span><span style="color: white;">.in</span></span>
             </a>
@@ -106,21 +106,36 @@
         <section class="hero-section">
             <div class="max-container text-center">
                 <div class="hero-badge" style="align-self: center;">
-                    <i data-lucide="trophy"></i>
-                    <span>Donation Leaderboard</span>
+                    <i data-lucide="swords"></i>
+                    <span>Daily Community Challenge</span>
                 </div>
                 <h1 class="hero-title">
-                    Top Donors of SharmBazaar
+                    Beat the King <span class="hero-crown">&#9819;</span>
                 </h1>
                 <p class="text-lg" style="max-width: 42rem; margin: 0 auto;">
-                    Become a top donor and get a special title! Your donations help maintain the website and support nearby organizations.
+                    Think you can take today's crown? Beat the current #1 by just ₹1 and become the King of Sharm.
                 </p><br>
                 <div class="flex justify-center mt-10">
-                    <a href="index.html#pricing" class="hero-btn">
-                        <span>Donate Now</span>
-                        <i data-lucide="heart"></i>
+                    <a href="#donation-section" class="hero-btn challenge-hero-btn">
+                        <i data-lucide="swords"></i>
+                        <span>Challenge the King</span>
                     </a>
                 </div>
+            </div>
+        </section>
+
+        <section class="challenge-intro-section">
+            <div class="max-container challenge-intro-grid">
+                <div class="challenge-copy">
+                    <p class="leaderboard-eyebrow">&#9819; Beat the King</p>
+                    <h2>Can you steal today's crown?</h2>
+                    <p>Only ₹1 more than the current #1 can take the throne.</p>
+                    <button type="button" class="hero-btn challenge-button" data-scroll-target="donation-section">
+                        <i data-lucide="swords"></i>
+                        <span>Challenge the King</span>
+                    </button>
+                </div>
+                <div id="challenge-king-summary" class="challenge-king-summary" aria-live="polite"></div>
             </div>
         </section>
 
@@ -129,15 +144,90 @@
             <div class="max-container leaderboard-container">
                 <!-- Top Donor Highlight -->
                 <div id="leaderboard-top-donor" class="leaderboard-feature"></div>
+
+                <div id="king-threat" class="king-threat" hidden></div>
                 
                 <!-- Full Leaderboard -->
                 <div class="leaderboard-heading">
-                    <p class="leaderboard-eyebrow">The supporters behind SharmBazaar</p>
-                    <h2>All Donors</h2>
-                    <p class="leaderboard-subtitle">Every contribution earns a place on the board.</p>
+                    <p class="leaderboard-eyebrow">&#9819; Today's crown race</p>
+                    <h2>Today's King of Sharm</h2>
+                    <p class="leaderboard-subtitle">Who will hold the crown today?</p>
                 </div>
                 <div id="full-leaderboard-list" class="leaderboard-list"></div>
+
+                <div class="share-challenge-section">
+                    <p class="leaderboard-eyebrow">&#9876; Think you can beat the King?</p>
+                    <h2>Call your challenger crew.</h2>
+                    <div class="share-actions">
+                        <button type="button" class="share-action" data-share="native"><i data-lucide="share-2"></i><span>Share Challenge</span></button>
+                        <button type="button" class="share-action" data-share="copy"><i data-lucide="copy"></i><span>Copy Challenge Link</span></button>
+                        <button type="button" class="share-action" data-share="whatsapp"><i data-lucide="message-circle"></i><span>Share on WhatsApp</span></button>
+                        <button type="button" class="share-action" data-share="instagram"><i data-lucide="camera"></i><span>Share on Instagram</span></button>
+                    </div>
+                    <p id="share-feedback" class="share-feedback" role="status"></p>
+                </div>
             </div>
+        </section>
+
+        <section id="donation-section" class="donation-section">
+            <div class="max-container donation-layout">
+                <div class="donation-copy-block">
+                    <p class="leaderboard-eyebrow">Scan &amp; Challenge &#9819;</p>
+                    <h2>Support SharmBazaar. Take the crown.</h2>
+                    <p>Scan the existing UPI QR or continue with secure Razorpay checkout. Every verified contribution can move you up the board.</p>
+                    <div class="upi-detail"><span>UPI ID</span><strong>sahiljangra5556@okaxis</strong></div>
+                    <div class="donation-target"><span>Current King: <strong id="donation-current-king">₹100</strong></span><span>To become King: <strong id="donation-challenge-amount">₹101</strong></span></div>
+                    <div class="quick-amounts" aria-label="Quick donation amounts">
+                        <button type="button" data-quick-amount="10">₹10</button>
+                        <button type="button" data-quick-amount="20">₹20</button>
+                        <button type="button" data-quick-amount="50">₹50</button>
+                        <button type="button" data-quick-amount="100">₹100</button>
+                        <button type="button" data-quick-amount="200">₹200</button>
+                        <button type="button" data-quick-amount="500">₹500</button>
+                    </div>
+                    <button type="button" class="hero-btn donation-open-button">Donate securely</button>
+                </div>
+                <div class="qr-card">
+                    <div class="qr-placeholder"><img src="https://quickchart.io/qr?text=upi%3A%2F%2Fpay%3Fpa%3Dsahiljangra5556%40okaxis%26pn%3DSharmBazaar&size=220" alt="UPI QR code"><span>UPI QR</span><small>Use any UPI app</small></div>
+                    <p>Scan &amp; challenge</p>
+                    <span>Verified payments appear after confirmation.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="sharm-levels-section">
+            <div class="max-container">
+                <div class="section-heading-center"><p class="leaderboard-eyebrow">&#127894; Your Sharm Level</p><h2>Every rupee unlocks a title.</h2></div>
+                <div class="sharm-levels-grid">
+                    <div class="sharm-level"><span>₹1–₹9</span><strong>&#128048; Sharm Starter</strong></div>
+                    <div class="sharm-level"><span>₹10–₹24</span><strong>&#128526; Sharm Supporter</strong></div>
+                    <div class="sharm-level"><span>₹25–₹49</span><strong>&#128293; Sharm Warrior</strong></div>
+                    <div class="sharm-level"><span>₹50–₹99</span><strong>&#9889; Sharm Legend</strong></div>
+                    <div class="sharm-level"><span>₹100–₹199</span><strong>&#9819; King Challenger</strong></div>
+                    <div class="sharm-level"><span>₹200+</span><strong>&#127942; Supreme King</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works-section">
+            <div class="max-container">
+                <div class="section-heading-center"><p class="leaderboard-eyebrow">The crown route</p><h2>How the challenge works</h2></div>
+                <div class="challenge-steps">
+                    <div><span>01</span><strong>Scan</strong><p>Scan the existing QR.</p></div>
+                    <div><span>02</span><strong>Support</strong><p>Support with any amount.</p></div>
+                    <div><span>03</span><strong>Climb</strong><p>Your verified support moves you up.</p></div>
+                    <div><span>04</span><strong>Take the crown</strong><p>Beat #1 and become King of Sharm.</p></div>
+                </div>
+                <p class="update-note">Leaderboard is reviewed and updated daily after 6 PM.</p>
+            </div>
+        </section>
+
+        <section class="daily-status-section">
+            <div class="max-container daily-status-card"><div><p class="leaderboard-eyebrow">&#128226; Daily crown update</p><h2>Leaderboard updates after 6:00 PM.</h2></div><span class="live-status"><i></i> Today's board is live</span></div>
+        </section>
+
+        <section class="hall-of-fame-section">
+            <div class="max-container hall-of-fame-card"><div><p class="leaderboard-eyebrow">&#127963; Sharm Hall of Fame</p><h2>Monthly champions will be remembered here.</h2><p>Historical champion data will appear once the first monthly challenge closes.</p></div><span class="hall-of-fame-mark">&#9819;</span></div>
         </section>
     </main>
 
@@ -171,7 +261,7 @@
                         <div class="p-2" style="background-color: var(--slate-800); border-radius: 0.5rem;">
                             <i data-lucide="shopping-bag" class="text-slate-400" style="width: 1.25rem; height: 1.25rem;"></i>
                         </div>
-                        <a href="index.html" style="text-decoration: none;">
+                        <a href="https://www.sharmbazaar.in/" style="text-decoration: none;">
                             <span class="text-xl font-bold text-white">Sharm<span style="color: var(--primary-red);">Bazaar</span></span>
                         </a>
                     </div>
