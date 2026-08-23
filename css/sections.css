@@ -356,36 +356,6 @@
         var(--slate-950);
 }
 
-.leaderboard-page .footer-socials {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-}
-
-.leaderboard-page .social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.35rem;
-    height: 2.35rem;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 50%;
-    background: rgba(15, 23, 42, 0.55);
-    color: var(--slate-300);
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-decoration: none;
-    text-transform: lowercase;
-    transition: all 0.2s ease;
-}
-
-.leaderboard-page .social-link:hover {
-    border-color: var(--accent-yellow);
-    background: var(--accent-yellow);
-    color: var(--slate-950);
-    transform: translateY(-2px);
-}
-
 @media (max-width: 767px) {
     .leaderboard-page .hero-section {
         min-height: 31rem;
@@ -402,9 +372,6 @@
         font-size: 1rem;
     }
 
-    .leaderboard-page .footer-socials {
-        gap: 0.7rem;
-    }
 }
 
 .leaderboard-container {

@@ -139,20 +139,6 @@
     }
 }
 
-.footer-socials {
-    display: flex;
-    gap: 1.5rem;
-}
-
-.social-link {
-    color: var(--slate-500);
-    transition: color 0.2s;
-}
-
-.social-link:hover {
-    color: white;
-}
-
 .footer-bottom {
     margin-top: 3rem;
     padding-top: 2rem;
