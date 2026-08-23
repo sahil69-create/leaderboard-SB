@@ -10,9 +10,9 @@ window.leaderboardData = [
     },
     {
         id: 2,
-        name: "Priya Patel",
+        name: "RV",
         location: "Mumbai, India",
-        avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Priya&backgroundColor=d91e27",
+        avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=RV&backgroundColor=d91e27",
         amount: 55,
         title: ""
     },
@@ -55,7 +55,20 @@ let smallPopupShown = false;
 
 // Check if we're on the full leaderboard page
 function isFullLeaderboardPage() {
-    return window.location.pathname.includes('index.html');
+    return Boolean(
+        document.getElementById('leaderboard-top-donor') &&
+        document.getElementById('full-leaderboard-list')
+    );
+}
+
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+    }[character]));
 }
 
 // Render Full Leaderboard Page
@@ -68,9 +81,9 @@ function renderFullLeaderboardPage() {
         const topDonor = sortedData[0];
         topDonorContainer.innerHTML = `
             <div class="top-donor-card" style="max-width: 600px; margin: 0 auto;">
-                <div class="top-donor-title">${topDonor.title || "Top Donor"}</div>
-                <h4 class="top-donor-name">${topDonor.name}</h4>
-                <p class="text-sm opacity-80 mb-2">${topDonor.location}</p>
+                <div class="top-donor-title">${escapeHTML(topDonor.title || "Top Donor")}</div>
+                <h4 class="top-donor-name">${escapeHTML(topDonor.name)}</h4>
+                <p class="text-sm opacity-80 mb-2">${escapeHTML(topDonor.location || 'Verified donor')}</p>
                 <div class="top-donor-amount">₹${topDonor.amount.toLocaleString('en-IN')}</div>
             </div>
         `;
@@ -94,8 +107,9 @@ function renderFullLeaderboardPage() {
             itemDiv.innerHTML = `
                 <div class="leaderboard-rank ${rankClass}" style="flex-shrink: 0;">${rank}</div>
                 <div class="leaderboard-info" style="flex-grow: 1; margin-left: 1rem;">
-                    <div class="leaderboard-name">${donor.name}</div>
-                    <div class="leaderboard-location">${donor.location}</div>
+                    <div class="leaderboard-name">${escapeHTML(donor.name)}</div>
+                    <div class="leaderboard-location">${escapeHTML(donor.location || 'Verified donor')}</div>
+                    ${donor.paidAt ? `<div class="leaderboard-payment-meta">Paid ${escapeHTML(new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(donor.paidAt)))} via ${escapeHTML(donor.sourceWebsite || 'SharmBazaar')}</div>` : ''}
                 </div>
                 <div class="leaderboard-amount" style="flex-shrink: 0;">₹${donor.amount.toLocaleString('en-IN')}</div>
             `;
@@ -103,6 +117,20 @@ function renderFullLeaderboardPage() {
         });
     }
 }
+
+window.loadLeaderboardData = async function() {
+    try {
+        const response = await fetch('/api/donations', { headers: { Accept: 'application/json' } });
+        if (!response.ok) return;
+        const liveData = await response.json();
+        if (Array.isArray(liveData) && liveData.length > 0) {
+            window.leaderboardData = liveData;
+            if (isFullLeaderboardPage()) renderFullLeaderboardPage();
+        }
+    } catch (error) {
+        console.info('Live donations are unavailable; showing the configured leaderboard.');
+    }
+};
 
 // Render Small Leaderboard Popup
 function renderSmallLeaderboardPopup() {
@@ -198,6 +226,7 @@ function initLeaderboard() {
     // Check if we're on full leaderboard page
     if (isFullLeaderboardPage()) {
         renderFullLeaderboardPage();
+        window.loadLeaderboardData();
     } else {
         // Render floating box
         renderFloatingDonorBox();
