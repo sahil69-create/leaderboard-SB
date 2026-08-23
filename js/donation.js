@@ -25,6 +25,13 @@
         });
     });
 
+    document.querySelectorAll('.donation-nav-link').forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            window.openDonationModal();
+        });
+    });
+
     modal.addEventListener('click', event => {
         if (event.target === modal) window.closeDonationModal();
     });
